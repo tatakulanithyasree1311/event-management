@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Add Event</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body{
+  background-image:url("12.jpg");
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
+  min-height:100vh;
+}
+
+.overlay{
+  background:rgba(0,0,0,0.65);
+  min-height:100vh;
+  padding:50px 0;
+}
+
+.card{
+  border-radius:15px;
+}
+
+.event-img{
+  height:120px;
+  width:100%;
+  object-fit:cover;
+  border-radius:10px;
+}
+h3,h4{
+  color:#fff;
+}
+</style>
+</head>
+
+<body>
+
+<div class="overlay">
+  <div class="container">
+
+    <!-- ADD EVENT FORM -->
+    <div class="card shadow p-4 mb-5 bg-white">
+      <h3 class="text-center mb-3 text-dark">➕ Add New Event</h3>
+
+      <div id="successMsg" class="alert alert-success d-none">
+        ✅ Event added successfully
+      </div>
+
+      <form id="eventForm">
+
+        <input type="text" id="eventName" class="form-control mb-3" placeholder="Event Name" required>
+
+        <input type="date" id="eventDate" class="form-control mb-3" required>
+
+        <input type="time" id="eventTime" class="form-control mb-3" required>
+
+        <input type="text" id="eventLocation" class="form-control mb-3" placeholder="Location" required>
+
+        <input type="text" id="eventImage" class="form-control mb-3"
+               placeholder="Event Image URL (paste image link)" required>
+
+        <textarea id="eventDesc" class="form-control mb-3"
+                  placeholder="Event Description" required></textarea>
+
+        <button type="submit" class="btn btn-primary w-100">
+          Add Event
+        </button>
+
+      </form>
+    </div>
+
+    <!-- EVENTS LIST -->
+    <h4 class="text-center mb-4">📋 Added Events</h4>
+
+    <div class="row" id="eventList"></div>
+
+  </div>
+</div>
+
+<script>
+const form = document.getElementById("eventForm");
+const list = document.getElementById("eventList");
+const successMsg = document.getElementById("successMsg");
+
+/* LOAD EVENTS */
+function loadEvents(){
+  const events = JSON.parse(localStorage.getItem("events")) || [];
+  list.innerHTML = "";
+
+  if(events.length === 0){
+    list.innerHTML = `<p class="text-center text-white">No events added yet</p>`;
+    return;
+  }
+
+  events.forEach((e,index)=>{
+    list.innerHTML += `
+      <div class="col-md-6 mb-4">
+        <div class="card p-3">
+          <img src="${e.image}" class="event-img mb-2">
+          <h5>${e.name}</h5>
+          <p><b>Date:</b> ${e.date}</p>
+          <p><b>Time:</b> ${e.time}</p>
+          <p><b>Location:</b> ${e.location}</p>
+          <button class="btn btn-danger btn-sm"
+                  onclick="deleteEvent(${index})">
+            Delete
+          </button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+/* ADD EVENT */
+form.addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const event = {
+    name: eventName.value.trim(),
+    date: eventDate.value,
+    time: eventTime.value,
+    location: eventLocation.value.trim(),
+    description: eventDesc.value.trim(),
+    image: eventImage.value.trim()
+  };
+
+  let events = JSON.parse(localStorage.getItem("events")) || [];
+  events.push(event);
+  localStorage.setItem("events", JSON.stringify(events));
+
+  successMsg.classList.remove("d-none");
+  setTimeout(()=>successMsg.classList.add("d-none"),2000);
+
+  form.reset();
+  loadEvents();
+});
+
+/* DELETE EVENT */
+function deleteEvent(index){
+  let events = JSON.parse(localStorage.getItem("events")) || [];
+  events.splice(index,1);
+  localStorage.setItem("events", JSON.stringify(events));
+  loadEvents();
+}
+
+/* INIT */
+loadEvents();
+</script>
+
+</body>
+</html>

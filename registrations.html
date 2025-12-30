@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Event Registrations</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body{
+  background: url('10.jpg');
+  background-size: cover;
+  min-height: 100vh;
+}
+
+.overlay{
+  background: rgba(0,0,0,0.65);
+  min-height: 100vh;
+  padding: 60px 0;
+}
+
+.card{
+  border-radius: 15px;
+}
+
+h2{
+  color: #fff;
+  font-weight: 600;
+}
+</style>
+</head>
+
+<body>
+
+<div class="overlay">
+  <div class="container">
+
+    <h2 class="text-center mb-4">📋 Event Registrations</h2>
+
+    <div class="card shadow p-4 bg-white">
+      <table class="table table-bordered table-striped text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>College</th>
+            <th>Event</th>
+          </tr>
+        </thead>
+        <tbody id="data"></tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* STEP 1: Get data from localStorage */
+let registrations = JSON.parse(localStorage.getItem("regs")) || [];
+
+/* STEP 2: Table body */
+let tbody = document.getElementById("data");
+tbody.innerHTML = "";
+
+/* STEP 3: If no data */
+if (registrations.length === 0) {
+  tbody.innerHTML = `
+    <tr>
+      <td colspan="4">No registrations found</td>
+    </tr>
+  `;
+}
+
+/* STEP 4: Show data (NO undefined) */
+registrations.forEach(r => {
+  let name    = r.name || r.fullname || "N/A";
+  let email   = r.email || "N/A";
+  let college = r.college || "N/A";
+  let event   = r.event || "N/A";
+
+  tbody.innerHTML += `
+    <tr>
+      <td>${name}</td>
+      <td>${email}</td>
+      <td>${college}</td>
+      <td>${event}</td>
+    </tr>
+  `;
+});
+</script>
+
+</body>
+</html>

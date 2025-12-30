@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Event Sign In</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body{
+  background-image: url('home_img.jpg');
+  background-size:cover;
+  background-position:center;
+  min-height:100vh;
+}
+.overlay{
+  background:rgba(0,0,0,0.65);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.card-box{
+  background:#fff;
+  border-radius:20px;
+  padding:40px;
+  width:420px;
+  box-shadow:0 10px 40px rgba(0,0,0,0.4);
+}
+.hidden{display:none;}
+small{display:block;margin-top:10px;color:#555;}
+small:hover{color:#000;}
+</style>
+</head>
+
+<body>
+
+<div class="overlay">
+  <div class="card-box text-center">
+
+    <h1>SIGN IN</h1>
+    <p class="text-muted">Fill the form below to see the upcoming events</p>
+
+    <div id="buttons">
+      <button class="btn btn-primary w-100 mb-2" onclick="showLogin()">Login</button>
+      <button class="btn btn-outline-secondary w-100" onclick="showRegister()">Register</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <form id="loginForm" class="hidden">
+      <input type="email" id="loginEmail" class="form-control mb-3" placeholder="Email" required>
+      <input type="password" id="loginPassword" class="form-control mb-3" placeholder="Password" required>
+      <button class="btn btn-success w-100">Login</button>
+      <small onclick="goBack()" style="cursor:pointer">← Back</small>
+    </form>
+
+    <!-- REGISTER FORM -->
+    <form id="registerForm" class="hidden">
+      <input type="text" id="regName" class="form-control mb-3" placeholder="Full Name" required>
+      <input type="email" id="regEmail" class="form-control mb-3" placeholder="Email" required>
+      <input type="password" id="regPassword" class="form-control mb-3" placeholder="Password" required>
+      <button class="btn btn-primary w-100">Register</button>
+      <small onclick="goBack()" style="cursor:pointer">← Back</small>
+    </form>
+
+  </div>
+</div>
+
+<script>
+const buttons = document.getElementById("buttons");
+const loginForm = document.getElementById("loginForm");
+const registerForm = document.getElementById("registerForm");
+
+function showLogin(){
+  buttons.classList.add("hidden");
+  loginForm.classList.remove("hidden");
+}
+
+function showRegister(){
+  buttons.classList.add("hidden");
+  registerForm.classList.remove("hidden");
+}
+
+function goBack(){
+  loginForm.classList.add("hidden");
+  registerForm.classList.add("hidden");
+  buttons.classList.remove("hidden");
+}
+
+/* REGISTER USER */
+registerForm.addEventListener("submit", function(e){
+  e.preventDefault();
+
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+
+  const name = regName.value.trim();
+  const email = regEmail.value.trim();
+  const password = regPassword.value.trim();
+
+  if(users.some(u => u.email === email)){
+    alert("User already registered. Please login.");
+    goBack();
+    return;
+  }
+
+  users.push({ name, email, password });
+  localStorage.setItem("users", JSON.stringify(users));
+
+  alert("Registration successful! Please login.");
+  registerForm.reset();
+  goBack();
+});
+
+/* LOGIN USER */
+loginForm.addEventListener("submit", function(e){
+  e.preventDefault();
+
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+
+  const email = loginEmail.value.trim();
+  const password = loginPassword.value.trim();
+
+  const user = users.find(u => u.email === email && u.password === password);
+
+  if(!user){
+    alert("Invalid email or password");
+    return;
+  }
+
+  localStorage.setItem("loggedUser", JSON.stringify(user));
+  window.location.href = "welcome.html";
+});
+</script>
+
+</body>
+</html>

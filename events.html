@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Events</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body{
+  background-image:url("https://images.unsplash.com/photo-1492684223066-81342ee5ff30");
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
+  min-height:100vh;
+}
+.overlay{
+  background:rgba(0,0,0,0.6);
+  min-height:100vh;
+  padding:50px 0;
+}
+.event-card{
+  border-radius:15px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.3);
+  transition:0.3s;
+}
+.event-card:hover{ transform:scale(1.05); }
+.event-card img{
+  height:200px;
+  object-fit:cover;
+}
+h2{ color:#fff; }
+
+
+.modal-content {
+  width:50%;
+  align-self: center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="overlay">
+  <div class="container">
+    <h2 class="text-center mb-5">Upcoming Events</h2>
+    <div class="row" id="eventsContainer"></div>
+  </div>
+</div>
+
+<!-- EVENT DETAILS -->
+<div class="modal fade" id="eventModal">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 id="eventTitle"></h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <img id="eventImage" class="img-fluid rounded mb-3">
+        <p id="eventDesc"></p>
+        <p><b>Date:</b> <span id="eventDate"></span></p>
+        <p><b>Time:</b> <span id="eventTime"></span></p>
+        <p><b>Location:</b> <span id="eventLocation"></span></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success w-30" onclick="openRegister()">Register</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div class="modal fade" id="registerModal">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Event Registration</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="registrationForm">
+
+    <!-- Basic Info -->
+    <div class="mb-3">
+      <label class="form-label">Full Name *</label>
+      <input type="text" class="form-control" id="name" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Email *</label>
+      <input type="email" class="form-control" id="email" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Phone Number *</label>
+      <input type="tel" class="form-control" id="phone" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">College Name *</label>
+      <input type="text" class="form-control" id="college" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Student ID (Optional)</label>
+      <input type="text" class="form-control" id="studentId">
+    </div>
+
+    <!-- Academic Info -->
+    <div class="mb-3">
+      <label class="form-label">Graduation *</label>
+      <select class="form-select" id="graduation" required>
+        <option value="">Select</option>
+        <option>UG</option>
+        <option>PG</option>
+      </select>
+      
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Year of Study *</label>
+      <select class="form-select" id="year" required>
+        <option value="">Select</option>
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Department</label>
+      <input type="text" class="form-control" id="department">
+    </div>
+
+    <!-- Preferences -->
+    <div class="mb-3">
+      <label class="form-label">Dietary Preference</label>
+      <select class="form-select" id="diet">
+        <option value="">Select</option>
+        <option>VEG</option>
+        <option>NON-VEG</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">T-shirt Size</label>
+      <select class="form-select" id="tshirt">
+        <option value="">Select</option>
+        <option>XS</option>
+        <option>S</option>
+        <option>M</option>
+        <option>L</option>
+        <option>XL</option>
+        <option>XXL</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Why are you joining?</label>
+      <textarea class="form-control" id="learning" rows="3"></textarea>
+    </div>
+
+    <!-- Consent -->
+    <div class="form-check mb-4">
+      <input class="form-check-input" type="checkbox" id="termsConsent" required>
+      <label class="form-check-label">
+        I agree to Terms & Conditions *
+      </label>
+    </div>
+
+    <button type="submit" class="btn btn-success w-100">
+      Submit Registration
+    </button>
+
+  </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="modal fade" id="successModal">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content text-center p-4">
+      <h5 class="text-success">✅ Registration Successful</h5>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+const eventModal = new bootstrap.Modal(document.getElementById("eventModal"));
+const registerModal = new bootstrap.Modal(document.getElementById("registerModal"));
+const successModal = new bootstrap.Modal(document.getElementById("successModal"));
+
+let selectedEvent = null;
+
+/* 🔧 FIX OLD EVENTS STRUCTURE */
+function getEvents(){
+  let events = JSON.parse(localStorage.getItem("events")) || [];
+
+  events = events.map(e => ({
+    name: e.name,
+    date: e.date,
+    time: e.time,
+    location: e.location,
+    description: e.description || e.desc || "",
+    image: e.image || "https://via.placeholder.com/600x300"
+  }));
+
+  localStorage.setItem("events", JSON.stringify(events));
+  return events;
+}
+
+/* LOAD EVENTS */
+function loadEvents(){
+  const events = getEvents();
+  const box = document.getElementById("eventsContainer");
+  box.innerHTML = "";
+
+  if(events.length === 0){
+    box.innerHTML = `<h5 class="text-white text-center">No events available</h5>`;
+    return;
+  }
+
+  events.forEach((e,i)=>{
+    box.innerHTML += `
+      <div class="col-md-4 mb-4">
+        <div class="card event-card">
+          <img src="${e.image}">
+          <div class="card-body">
+            <h5>${e.name}</h5>
+            <button class="btn btn-info w-100" onclick="openEvent(${i})">More</button>
+          </div>
+        </div>
+      </div>`;
+  });
+}
+
+/* OPEN EVENT DETAILS */
+function openEvent(index){
+  const events = getEvents();
+  selectedEvent = events[index];
+
+  eventTitle.innerText = selectedEvent.name;
+  eventImage.src = selectedEvent.image;
+  eventDesc.innerText = selectedEvent.description;
+  eventDate.innerText = selectedEvent.date;
+  eventTime.innerText = selectedEvent.time;
+  eventLocation.innerText = selectedEvent.location;
+
+  eventModal.show();
+}
+
+/* OPEN REGISTER */
+function openRegister(){
+  eventModal.hide();
+  registrationForm.reset();
+  registerModal.show();
+}
+
+/* SAVE REGISTRATION */
+registrationForm.addEventListener("submit", function(e){
+  e.preventDefault();
+
+  let regs = JSON.parse(localStorage.getItem("regs")) || [];
+
+  regs.push({
+    event: selectedEvent.name,
+    name: name.value,
+    email: email.value,
+    phone: phone.value,
+    college: college.value
+  });
+
+  localStorage.setItem("regs", JSON.stringify(regs));
+
+  registerModal.hide();
+  successModal.show();
+
+  setTimeout(()=>successModal.hide(),2000);
+});
+
+loadEvents();
+</script>
+
+</body>
+</html>
